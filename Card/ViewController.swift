@@ -55,7 +55,6 @@ class ViewController: UIViewController {
     // いいねされた人の出身リスト
     var likeTown: [String] = []
 
-
     // viewのレイアウト処理が完了した時に呼ばれる
     override func viewDidLayoutSubviews() {
         // ベースカードの中心を代入
@@ -85,10 +84,9 @@ class ViewController: UIViewController {
 
     // セグエによる遷移前に呼ばれる
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
+        // segueの識別子の確認
         if segue.identifier == "ToLikedList" {
             let vc = segue.destination as! LikedListTableViewController
-
             // LikedListTableViewControllerのlikedName(左)にViewCountrollewのLikedName(右)を代入
             // 名前
             vc.likedName = likedName
@@ -127,9 +125,9 @@ class ViewController: UIViewController {
     func nextView() {
         if selectedCardCount >= personList.count {
             // 遷移処理
-            if likedName.count != 0 {
+            if likedName.count != 0 { // いいねリストの数が0じゃないときの処理
                 performSegue(withIdentifier: "ToLikedList", sender: self)
-            } else {
+            } else { // いいねリストの数が0だった時の処理
                 performSegue(withIdentifier: "toNoneLikedPerson", sender: nil)
             }
         }
