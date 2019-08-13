@@ -27,18 +27,31 @@ class ViewController: UIViewController {
     var personList: [UIView] = []
     // 選択されたカードの数
     var selectedCardCount: Int = 0
+    
     // ユーザーリスト
     let nameList: [String] = ["津田梅子","ジョージワシントン","ガリレオガリレイ","板垣退助","ジョン万次郎"]
     // 「いいね」をされた名前の配列
     var likedName: [String] = []
     
     // 職業リスト
-    let jobList: [String] = ["教師", "物理学者", "大統領", "議員", "冒険家"]
+    let jobList: [String: String] = [
+        "津田梅子": "教師",
+        "ジョージワシントン": "物理学者",
+        "ガリレオガリレイ": "大統領",
+        "板垣退助": "議員",
+        "ジョン万次郎": "冒険家"
+    ]
     // いいねされた人の職業リスト
     var likedJob: [String] = []
     
     // 出身リスト
-    let townList: [String] = ["千葉", "イタリア", "アメリカ", "高知", "アメリカ"]
+    let townList: [String: String] = [
+        "津田梅子": "千葉",
+        "ジョージワシントン": "イタリア",
+        "ガリレオガリレイ": "アメリカ",
+        "板垣退助": "高知",
+        "ジョン万次郎": "アメリカ"
+    ]
     // いいねされた人の出身リスト
     var likeTown: [String] = []
 
@@ -92,6 +105,7 @@ class ViewController: UIViewController {
         resetPersonList()
     }
 
+    // 飛ばしたカードを元に戻す関数
     func resetPersonList() {
         // 5人の飛んで行ったビューを元の位置に戻す
         for person in personList {
@@ -119,6 +133,14 @@ class ViewController: UIViewController {
                 performSegue(withIdentifier: "toNoneLikedPerson", sender: nil)
             }
         }
+    }
+    
+    // いいねされた人の情報を配列に加えていく関数
+    func setInfo(name: String) {
+        // いいねリストに追加
+        likedName.append(name)
+        likedJob.append(jobList["\(name)"]!)
+        likeTown.append(townList["\(name)"]!)
     }
 
     // スワイプ処理
@@ -184,9 +206,7 @@ class ViewController: UIViewController {
                 // likeImageを隠す
                 likeImage.isHidden = true
                 // いいねリストに追加
-                likedName.append(nameList[selectedCardCount])
-                likedJob.append(jobList[selectedCardCount])
-                likeTown.append(townList[selectedCardCount])
+                setInfo(name: nameList[selectedCardCount])
                 // 次のカードへ
                 selectedCardCount += 1
                 
@@ -232,9 +252,7 @@ class ViewController: UIViewController {
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x + 500, y:self.personList[self.selectedCardCount].center.y)
         })
         // いいねリストに追加
-        likedName.append(nameList[selectedCardCount])
-        likedJob.append(jobList[selectedCardCount])
-        likeTown.append(townList[selectedCardCount])
+        setInfo(name: nameList[selectedCardCount])
         selectedCardCount += 1
         // 画面遷移
         nextView()
