@@ -14,25 +14,51 @@ class ViewController: UIViewController {
     @IBOutlet weak var baseCard: UIView!
     // スワイプ中にgood or bad の表示
     @IBOutlet weak var likeImage: UIImageView!
-    // ユーザーカード
-    @IBOutlet weak var person1: UIView!
-    @IBOutlet weak var person2: UIView!
-    @IBOutlet weak var person3: UIView!
-    @IBOutlet weak var person4: UIView!
-    @IBOutlet weak var person5: UIView!
 
+    // ユーザーカード1の情報
+    @IBOutlet weak var person1: UIView!
+    @IBOutlet weak var personImage1: UIImageView!
+    @IBOutlet weak var personName1: UILabel!
+    @IBOutlet weak var personJob1: UILabel!
+    @IBOutlet weak var personOrigin1: UILabel!
+    
+    // ユーザーカード2の情報
+    @IBOutlet weak var person2: UIView!
+    @IBOutlet weak var personImage2: UIImageView!
+    @IBOutlet weak var personName2: UILabel!
+    @IBOutlet weak var personJob2: UILabel!
+    @IBOutlet weak var personOrigin2: UILabel!
+    
     // ベースカードの中心
     var centerOfCard: CGPoint!
     // ユーザーカードの配列
     var personList: [UIView] = []
-    // 選択されたカードの数
+    // どのビューを表示させるか
     var selectedCardCount: Int = 0
-    // ユーザーリスト
+    // 表示しているユーザーカードの番目
+    var showViewCount: Int = 0
+    // ユーザーリスト情報
     let nameList: [String] = ["津田梅子","ジョージワシントン","ガリレオガリレイ","板垣退助","ジョン万次郎"]
+    // 仕事
+    let jobList: [String: String] = [
+        "津田梅子":"教師",
+        "ジョージワシントン": "大統領",
+        "ガリレオガリレイ": "物理学者",
+        "板垣退助": "議員",
+        "ジョン万次郎": "冒険家"
+    ]
+    // 出身
+    let originList: [String: String] = [
+        "津田梅子":"千葉",
+        "ジョージワシントン": "アメリカ",
+        "ガリレオガリレイ": "イタリア",
+        "板垣退助": "高知",
+        "ジョン万次郎": "アメリカ"
+    ]
+
     // 「いいね」をされた名前の配列
     var likedName: [String] = []
-
-
+    
     // viewのレイアウト処理が完了した時に呼ばれる
     override func viewDidLayoutSubviews() {
         // ベースカードの中心を代入
@@ -42,12 +68,9 @@ class ViewController: UIViewController {
     // ロード完了時に呼ばれる
     override func viewDidLoad() {
         super.viewDidLoad()
-        // personListにperson1から5を追加
         personList.append(person1)
         personList.append(person2)
-        personList.append(person3)
-        personList.append(person4)
-        personList.append(person5)
+        
     }
 
     // view表示前に呼ばれる（遷移すると戻ってくる度によばれる）
@@ -90,6 +113,20 @@ class ViewController: UIViewController {
         baseCard.center = centerOfCard
         // 角度を戻す
         baseCard.transform = .identity
+    }
+    
+    // ユーザーカードを次に進める処理
+    func nextUserView() {
+        // ユーザーカードを元に戻す
+        // 背面に持っていく
+        self.view.sendSubviewToBack(personList[selectedCardCount])
+        // 中央に戻す
+        personList[selectedCardCount].center = centerOfCard
+        personList[selectedCardCount].transform = .identity
+        
+        // 次のカードへ
+        showViewCount += 1
+        selectedCardCount = showViewCount % 2
     }
 
     // スワイプ処理
@@ -136,8 +173,10 @@ class ViewController: UIViewController {
                 resetCard()
                 // likeImageを隠す
                 likeImage.isHidden = true
-                // 次のカードへ
-                selectedCardCount += 1
+                
+                // ユーザーカードを元に戻す
+                nextUserView()
+
 
                 if selectedCardCount >= personList.count {
                     // 遷移処理
@@ -158,8 +197,10 @@ class ViewController: UIViewController {
                 likeImage.isHidden = true
                 // いいねリストに追加
                 likedName.append(nameList[selectedCardCount])
-                // 次のカードへ
-                selectedCardCount += 1
+                
+                // ユーザーカードを元に戻す
+                nextUserView()
+
                 
                 if selectedCardCount >= personList.count {
                     // 遷移処理
@@ -191,8 +232,10 @@ class ViewController: UIViewController {
             // ユーザーカードを左にとばす
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x - 500, y:self.personList[self.selectedCardCount].center.y)
         })
+        
+        // ユーザーカードを元に戻す
+        nextUserView()
 
-        selectedCardCount += 1
         // 画面遷移
         if selectedCardCount >= personList.count {
             performSegue(withIdentifier: "ToLikedList", sender: self)
@@ -208,7 +251,10 @@ class ViewController: UIViewController {
         })
         // いいねリストに追加
         likedName.append(nameList[selectedCardCount])
-        selectedCardCount += 1
+        
+        // ユーザーカードを元に戻す
+        nextUserView()
+
         // 画面遷移
         if selectedCardCount >= personList.count {
             performSegue(withIdentifier: "ToLikedList", sender: self)
