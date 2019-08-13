@@ -108,6 +108,18 @@ class ViewController: UIViewController {
         // 角度を戻す
         baseCard.transform = .identity
     }
+    
+    // 画面遷移を管理する処理
+    func nextView() {
+        if selectedCardCount >= personList.count {
+            // 遷移処理
+            if likedName.count != 0 {
+                performSegue(withIdentifier: "ToLikedList", sender: self)
+            } else {
+                performSegue(withIdentifier: "toNoneLikedPerson", sender: nil)
+            }
+        }
+    }
 
     // スワイプ処理
     @IBAction func swipeCard(_ sender: UIPanGestureRecognizer) {
@@ -156,10 +168,8 @@ class ViewController: UIViewController {
                 // 次のカードへ
                 selectedCardCount += 1
 
-                if selectedCardCount >= personList.count {
-                    // 遷移処理
-                    performSegue(withIdentifier: "ToLikedList", sender: self)
-                }
+                // 画面遷移
+                nextView()
 
             } else if card.center.x > self.view.frame.width - 50 {
                 // 右に大きくスワイプしたときの処理
@@ -180,10 +190,8 @@ class ViewController: UIViewController {
                 // 次のカードへ
                 selectedCardCount += 1
                 
-                if selectedCardCount >= personList.count {
-                    // 遷移処理
-                    performSegue(withIdentifier: "ToLikedList", sender: self)
-                }
+                // 画面遷移
+                nextView()
 
             } else {
                 // アニメーションをつける
@@ -213,9 +221,7 @@ class ViewController: UIViewController {
 
         selectedCardCount += 1
         // 画面遷移
-        if selectedCardCount >= personList.count {
-            performSegue(withIdentifier: "ToLikedList", sender: self)
-        }
+        nextView()
     }
 
     // いいねボタン
@@ -231,9 +237,7 @@ class ViewController: UIViewController {
         likeTown.append(townList[selectedCardCount])
         selectedCardCount += 1
         // 画面遷移
-        if selectedCardCount >= personList.count {
-            performSegue(withIdentifier: "ToLikedList", sender: self)
-        }
+        nextView()
     }
 }
 
