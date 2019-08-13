@@ -35,7 +35,9 @@ class ViewController: UIViewController {
     var personList: [UIView] = []
     // どのビューを表示させるか
     var selectedCardCount: Int = 0
-    // 表示しているユーザーカードの番目
+    // 次に表示させるユーザーリストの番目
+    var nextShowViewCount: Int = 2
+    // 現在表示させているユーザーリストの番目
     var showViewCount: Int = 0
     // ユーザーリスト情報
     let nameList: [String] = ["津田梅子","ジョージワシントン","ガリレオガリレイ","板垣退助","ジョン万次郎"]
@@ -73,13 +75,38 @@ class ViewController: UIViewController {
         
     }
 
-    // view表示前に呼ばれる（遷移すると戻ってくる度によばれる）
-    override func viewWillAppear(_ animated: Bool) {
-        // カウント初期化
-        selectedCardCount = 0
-        // リスト初期化
-        likedName = []
-    }
+//    // view表示前に呼ばれる（遷移すると戻ってくる度によばれる）
+//    override func viewWillAppear(_ animated: Bool) {
+//        // カウント初期化
+//        selectedCardCount = 0
+//        showViewCount = 0
+//        nextShowViewCount = 2
+//        // リスト初期化
+//        likedName = []
+//
+//        // 二枚のビューを初期化
+//        // 前面のビュー
+//        let name1 = nameList[showViewCount]
+//        // ラベルに名前を表示
+//        personName1.text = name1
+//        // ラベルに職業を表示
+//        personJob1.text = jobList["\(name1)"]
+//        // ラベルに出身地を表示
+//        personOrigin1.text = originList["\(name1)"]
+//        // 画像を表示
+//        personImage1.image = UIImage(named: "\(name1)")
+//
+//        // 背面のビュー
+//        let name2 = nameList[showViewCount + 1]
+//        // ラベルに名前を表示
+//        personName2.text = name2
+//        // ラベルに職業を表示
+//        personJob2.text = jobList["\(name2)"]
+//        // ラベルに出身地を表示
+//        personOrigin2.text = originList["\(name2)"]
+//        // 画像を表示
+//        personImage2.image = UIImage(named: "\(name2)")
+//    }
 
     // セグエによる遷移前に呼ばれる
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -94,8 +121,37 @@ class ViewController: UIViewController {
 
     // 完全に遷移が行われ、スクリーン上からViewControllerが表示されなくなったときに呼ばれる
     override func viewDidDisappear(_ animated: Bool) {
-        // ユーザーカードを元に戻す
-        resetPersonList()
+        // カウント初期化
+        selectedCardCount = 0
+        showViewCount = 0
+        nextShowViewCount = 2
+        // リスト初期化
+        likedName = []
+        
+        // ビューを整理
+        self.view.sendSubviewToBack(person2)
+        // 二枚のビューを初期化
+        // 前面のビュー
+        let name1 = nameList[showViewCount]
+        // ラベルに名前を表示
+        personName1.text = name1
+        // ラベルに職業を表示
+        personJob1.text = jobList["\(name1)"]
+        // ラベルに出身地を表示
+        personOrigin1.text = originList["\(name1)"]
+        // 画像を表示
+        personImage1.image = UIImage(named: "\(name1)")
+        
+        // 背面のビュー
+        let name2 = nameList[showViewCount + 1]
+        // ラベルに名前を表示
+        personName2.text = name2
+        // ラベルに職業を表示
+        personJob2.text = jobList["\(name2)"]
+        // ラベルに出身地を表示
+        personOrigin2.text = originList["\(name2)"]
+        // 画像を表示
+        personImage2.image = UIImage(named: "\(name2)")
     }
 
     func resetPersonList() {
@@ -124,9 +180,47 @@ class ViewController: UIViewController {
         personList[selectedCardCount].center = centerOfCard
         personList[selectedCardCount].transform = .identity
         
+        if nextShowViewCount < nameList.count {
+            checkUserCard()
+        }
         // 次のカードへ
+        nextShowViewCount += 1
         showViewCount += 1
+        
+        if showViewCount >= nameList.count {
+            // 遷移処理
+            performSegue(withIdentifier: "ToLikedList", sender: self)
+        }
+
+
+        
         selectedCardCount = showViewCount % 2
+    }
+    
+    //
+    func checkUserCard() {
+        // 表示されているカードの名前を保管
+        let name: String = nameList[nextShowViewCount]
+        // 表示するビューを管理する
+        if selectedCardCount == 0 {
+            // ラベルに名前を表示
+            personName1.text = name
+            // ラベルに職業を表示
+            personJob1.text = jobList["\(name)"]
+            // ラベルに出身地を表示
+            personOrigin1.text = originList["\(name)"]
+            // 画像を表示
+            personImage1.image = UIImage(named: "\(name)")
+        } else {
+            // ラベルに名前を表示
+            personName2.text = name
+            // ラベルに職業を表示
+            personJob2.text = jobList["\(name)"]
+            // ラベルに出身地を表示
+            personOrigin2.text = originList["\(name)"]
+            // 画像を表示
+            personImage2.image = UIImage(named: "\(name)")
+        }
     }
 
     // スワイプ処理
@@ -178,10 +272,10 @@ class ViewController: UIViewController {
                 nextUserView()
 
 
-                if selectedCardCount >= personList.count {
-                    // 遷移処理
-                    performSegue(withIdentifier: "ToLikedList", sender: self)
-                }
+//                if selectedCardCount >= personList.count {
+//                    // 遷移処理
+//                    performSegue(withIdentifier: "ToLikedList", sender: self)
+//                }
 
             } else if card.center.x > self.view.frame.width - 50 {
                 // 右に大きくスワイプしたときの処理
@@ -196,16 +290,16 @@ class ViewController: UIViewController {
                 // likeImageを隠す
                 likeImage.isHidden = true
                 // いいねリストに追加
-                likedName.append(nameList[selectedCardCount])
+                likedName.append(nameList[showViewCount])
                 
                 // ユーザーカードを元に戻す
                 nextUserView()
 
-                
-                if selectedCardCount >= personList.count {
-                    // 遷移処理
-                    performSegue(withIdentifier: "ToLikedList", sender: self)
-                }
+//
+//                if selectedCardCount >= personList.count {
+//                    // 遷移処理
+//                    performSegue(withIdentifier: "ToLikedList", sender: self)
+//                }
 
             } else {
                 // アニメーションをつける
@@ -236,10 +330,10 @@ class ViewController: UIViewController {
         // ユーザーカードを元に戻す
         nextUserView()
 
-        // 画面遷移
-        if selectedCardCount >= personList.count {
-            performSegue(withIdentifier: "ToLikedList", sender: self)
-        }
+//        // 画面遷移
+//        if selectedCardCount >= personList.count {
+//            performSegue(withIdentifier: "ToLikedList", sender: self)
+//        }
     }
 
     // いいねボタン
@@ -250,15 +344,15 @@ class ViewController: UIViewController {
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x + 500, y:self.personList[self.selectedCardCount].center.y)
         })
         // いいねリストに追加
-        likedName.append(nameList[selectedCardCount])
+        likedName.append(nameList[showViewCount])
         
         // ユーザーカードを元に戻す
         nextUserView()
 
-        // 画面遷移
-        if selectedCardCount >= personList.count {
-            performSegue(withIdentifier: "ToLikedList", sender: self)
-        }
+//        // 画面遷移
+//        if selectedCardCount >= personList.count {
+//            performSegue(withIdentifier: "ToLikedList", sender: self)
+//        }
     }
 }
 
