@@ -31,6 +31,16 @@ class ViewController: UIViewController {
     let nameList: [String] = ["津田梅子","ジョージワシントン","ガリレオガリレイ","板垣退助","ジョン万次郎"]
     // 「いいね」をされた名前の配列
     var likedName: [String] = []
+    
+    // 職業リスト
+    let jobList: [String] = ["教師", "物理学者", "大統領", "議員", "冒険家"]
+    // いいねされた人の職業リスト
+    var likedJob: [String] = []
+    
+    // 出身リスト
+    let townList: [String] = ["千葉", "イタリア", "アメリカ", "高知", "アメリカ"]
+    // いいねされた人の出身リスト
+    var likeTown: [String] = []
 
 
     // viewのレイアウト処理が完了した時に呼ばれる
@@ -56,6 +66,8 @@ class ViewController: UIViewController {
         selectedCardCount = 0
         // リスト初期化
         likedName = []
+        likedJob = []
+        likeTown = []
     }
 
     // セグエによる遷移前に呼ばれる
@@ -65,7 +77,12 @@ class ViewController: UIViewController {
             let vc = segue.destination as! LikedListTableViewController
 
             // LikedListTableViewControllerのlikedName(左)にViewCountrollewのLikedName(右)を代入
+            // 名前
             vc.likedName = likedName
+            // 職業
+            vc.likedJob = likedJob
+            // 出身
+            vc.likedTown = likeTown
         }
     }
 
@@ -158,6 +175,8 @@ class ViewController: UIViewController {
                 likeImage.isHidden = true
                 // いいねリストに追加
                 likedName.append(nameList[selectedCardCount])
+                likedJob.append(jobList[selectedCardCount])
+                likeTown.append(townList[selectedCardCount])
                 // 次のカードへ
                 selectedCardCount += 1
                 
@@ -208,6 +227,8 @@ class ViewController: UIViewController {
         })
         // いいねリストに追加
         likedName.append(nameList[selectedCardCount])
+        likedJob.append(jobList[selectedCardCount])
+        likeTown.append(townList[selectedCardCount])
         selectedCardCount += 1
         // 画面遷移
         if selectedCardCount >= personList.count {
