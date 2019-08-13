@@ -9,7 +9,16 @@
 import UIKit
 
 class CustomTableViewCell: UITableViewCell {
-
+    
+    // 顔写真
+    @IBOutlet weak var faceImage: UIImageView!
+    // 名前
+    @IBOutlet weak var nameLabel: UILabel!
+    // 職業
+    @IBOutlet weak var jobLabel: UILabel!
+    // 出身
+    @IBOutlet weak var townLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
