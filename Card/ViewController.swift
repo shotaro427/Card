@@ -277,7 +277,7 @@ class ViewController: UIViewController {
     }
     
     // よくないねボタン
-    @IBAction func dislikeButtonTapped(_ sender: Any) {
+    @IBAction func dislikeButtonTapped(_ sender: UIButton) {
         
         UIView.animate(withDuration: 0.5, animations: {
             // ベースカードをリセット
@@ -285,21 +285,38 @@ class ViewController: UIViewController {
             // ユーザーカードを左にとばす
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x - 500, y:self.personList[self.selectedCardCount].center.y)
         })
-        // ユーザーカードを元に戻す
-        nextUserView()
+        
+        // ボタンを選択できなくする(連打防止)
+        sender.isEnabled = false
+        // 0.5秒後に次のカードを表示させる
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            // 次のユーザーカードを表示させる
+            self.nextUserView()
+            // ボタンを元に戻す
+            sender.isEnabled = true
+        })
     }
     
     // いいねボタン
-    @IBAction func likeButtonTaped(_ sender: Any) {
+    @IBAction func likeButtonTaped(_ sender: UIButton) {
         
         UIView.animate(withDuration: 0.5, animations: {
             self.resetCard()
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x + 500, y:self.personList[self.selectedCardCount].center.y)
         })
+        
         // いいねリストに追加
         likedName.append(userList[showViewCount].name)
-        // ユーザーカードを元に戻す
-        nextUserView()
+        
+        // ボタンを選択できなくする(連打防止)
+        sender.isEnabled = false
+        // 0.5秒後に次のカードを表示させる
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            // 次のユーザーカードを表示させる
+            self.nextUserView()
+            // ボタンを元に戻す
+            sender.isEnabled = true
+        })
     }
 }
 
