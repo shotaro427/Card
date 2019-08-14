@@ -33,39 +33,22 @@ class ViewController: UIViewController {
     var centerOfCard: CGPoint!
     // ユーザーカードの配列
     var personList: [UIView] = []
-    // どのビューを表示させるか
+    // どちらビューを表示させるか
     var selectedCardCount: Int = 0
     // 次に表示させるユーザーリストの番目
     var nextShowViewCount: Int = 2
     // 現在表示させているユーザーリストの番目
     var showViewCount: Int = 0
-    // ユーザーリスト情報
-    let nameList: [String] = ["津田梅子","ジョージワシントン","ガリレオガリレイ","板垣退助","ジョン万次郎"]
-    // 仕事
-    let jobList: [String: String] = [
-        "津田梅子": "教師",
-        "ジョージワシントン": "大統領",
-        "ガリレオガリレイ": "物理学者",
-        "板垣退助": "議員",
-        "ジョン万次郎": "冒険家"
-    ]
-    // 出身
-    let originList: [String: String] = [
-        "津田梅子": "千葉",
-        "ジョージワシントン": "アメリカ",
-        "ガリレオガリレイ": "イタリア",
-        "板垣退助": "高知",
-        "ジョン万次郎": "アメリカ"
-    ]
-    // ビューの背景
-    let backgroundList: [String: UIColor] = [
-        "津田梅子": #colorLiteral(red: 0.2084727883, green: 1, blue: 0.8079068065, alpha: 1),
-        "ジョージワシントン": #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1),
-        "ガリレオガリレイ": #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1),
-        "板垣退助": #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1),
-        "ジョン万次郎": #colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1)
-    ]
     
+    /// ユーザーリスト
+    let userList: [UserData] = [
+        UserData(name: "津田梅子", image: #imageLiteral(resourceName: "津田梅子"), job: "教師", homeTown: "千葉", backColor: #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1)),
+        UserData(name: "ジョージワシントン", image: #imageLiteral(resourceName: "ジョージワシントン"), job: "大統領", homeTown: "アメリカ", backColor: #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)),
+        UserData(name: "ガリレオガリレイ", image: #imageLiteral(resourceName: "ガリレオガリレイ"), job: "物理学者", homeTown: "イタリア", backColor: #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)),
+        UserData(name: "板垣退助", image: #imageLiteral(resourceName: "板垣退助"), job: "議員", homeTown: "高知", backColor: #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1)),
+        UserData(name: "ジョン万次郎", image: #imageLiteral(resourceName: "ジョン万次郎"), job: "冒険家", homeTown: "アメリカ", backColor: #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1))
+    ]
+
     // 「いいね」をされた名前の配列
     var likedName: [String] = []
     
@@ -110,30 +93,30 @@ class ViewController: UIViewController {
         
         // 二枚のビューを初期化
         // 前面のビュー
-        let name1 = nameList[showViewCount]
+        let user1 = userList[showViewCount]
         // ビューの背景に色をつける
-        person1.backgroundColor = backgroundList["\(name1)"]
+        person1.backgroundColor = user1.backColor
         // ラベルに名前を表示
-        personName1.text = name1
+        personName1.text = user1.name
         // ラベルに職業を表示
-        personJob1.text = jobList["\(name1)"]
+        personJob1.text = user1.job
         // ラベルに出身地を表示
-        personOrigin1.text = originList["\(name1)"]
+        personOrigin1.text = user1.homeTown
         // 画像を表示
-        personImage1.image = UIImage(named: "\(name1)")
+        personImage1.image = user1.image
         
         // 背面のビュー
-        let name2 = nameList[showViewCount + 1]
+        let user2 = userList[showViewCount + 1]
         // ビューの背景に色をつける
-        person2.backgroundColor = backgroundList["\(name2)"]
+        person2.backgroundColor = user2.backColor
         // ラベルに名前を表示
-        personName2.text = name2
+        personName2.text = user2.name
         // ラベルに職業を表示
-        personJob2.text = jobList["\(name2)"]
+        personJob2.text = user2.job
         // ラベルに出身地を表示
-        personOrigin2.text = originList["\(name2)"]
+        personOrigin2.text = user2.homeTown
         // 画像を表示
-        personImage2.image = UIImage(named: "\(name2)")
+        personImage2.image = user2.image
     }
     
     func resetPersonList() {
@@ -163,7 +146,7 @@ class ViewController: UIViewController {
         personList[selectedCardCount].transform = .identity
         
         // ビューがすべての人物を描画し終わったら、ビューを真っ白にするようにする
-        if nextShowViewCount < nameList.count {
+        if nextShowViewCount < userList.count {
             checkUserCard()
         } else {
             // 背面のビューを見えなくする
@@ -174,7 +157,7 @@ class ViewController: UIViewController {
         nextShowViewCount += 1
         showViewCount += 1
         
-        if showViewCount >= nameList.count {
+        if showViewCount >= userList.count {
             // 遷移処理
             performSegue(withIdentifier: "ToLikedList", sender: self)
         }
@@ -187,30 +170,30 @@ class ViewController: UIViewController {
     //
     func checkUserCard() {
         // 表示されているカードの名前を保管
-        let name: String = nameList[nextShowViewCount]
+        let user = userList[nextShowViewCount]
         // 表示するビューを管理する
         if selectedCardCount == 0 {
             // ビューの背景に色をつける
-            person1.backgroundColor = backgroundList["\(name)"]
+            person1.backgroundColor = user.backColor
             // ラベルに名前を表示
-            personName1.text = name
+            personName1.text = user.name
             // ラベルに職業を表示
-            personJob1.text = jobList["\(name)"]
+            personJob1.text = user.job
             // ラベルに出身地を表示
-            personOrigin1.text = originList["\(name)"]
+            personOrigin1.text = user.homeTown
             // 画像を表示
-            personImage1.image = UIImage(named: "\(name)")
+            personImage1.image = user.image
         } else {
             // ビューの背景に色をつける
-            person2.backgroundColor = backgroundList["\(name)"]
+            person2.backgroundColor = user.backColor
             // ラベルに名前を表示
-            personName2.text = name
+            personName2.text = user.name
             // ラベルに職業を表示
-            personJob2.text = jobList["\(name)"]
+            personJob2.text = user.job
             // ラベルに出身地を表示
-            personOrigin2.text = originList["\(name)"]
+            personOrigin2.text = user.homeTown
             // 画像を表示
-            personImage2.image = UIImage(named: "\(name)")
+            personImage2.image = user.image
         }
     }
     
@@ -273,7 +256,7 @@ class ViewController: UIViewController {
                 // likeImageを隠す
                 likeImage.isHidden = true
                 // いいねリストに追加
-                likedName.append(nameList[showViewCount])
+                likedName.append(userList[showViewCount].name)
                 
                 // ユーザーカードを元に戻す
                 nextUserView()
@@ -314,7 +297,7 @@ class ViewController: UIViewController {
             self.personList[self.selectedCardCount].center = CGPoint(x:self.personList[self.selectedCardCount].center.x + 500, y:self.personList[self.selectedCardCount].center.y)
         })
         // いいねリストに追加
-        likedName.append(nameList[showViewCount])
+        likedName.append(userList[showViewCount].name)
         // ユーザーカードを元に戻す
         nextUserView()
     }
