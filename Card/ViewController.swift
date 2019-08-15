@@ -178,16 +178,32 @@ class ViewController: UIViewController {
     }
     
     /// ユーザーカードを左右に飛ばす処理
-    func farCard(distance: CGFloat) {
-        // X座標をdistance分飛ばす
-        personList[selectedCardCount].center = CGPoint(x: personList[selectedCardCount].center.x + distance, y :personList[selectedCardCount].center.y)
+    func farCard(distance: CGFloat, button: UIButton?) {
+        UIView.animate(withDuration: 0.5, animations: {
+            // ユーザーカードを左にとばす
+            // X座標をdistance分飛ばす
+            self.personList[self.selectedCardCount].center = CGPoint(x: self.personList[self.selectedCardCount].center.x + distance, y :self.personList[self.selectedCardCount].center.y)
+        })
+
+        // ボタンかスワイプかを判断
+        if button != nil {
+            // ボタンを使えなくする(連打防止)
+            button?.isEnabled = false
+            // 0.5秒のdelayをかける
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                self.nextUserView()
+                button?.isEnabled = true
+            })
+
+        } else {
+            nextUserView()
+        }
         // ベースカードをリセット
         resetCard()
     }
     
     // スワイプ処理
     @IBAction func swipeCard(_ sender: UIPanGestureRecognizer) {
-        
         // ベースカード
         let card = sender.view!
         // 動いた距離
@@ -213,34 +229,21 @@ class ViewController: UIViewController {
             likeImage.image = #imageLiteral(resourceName: "よくないね")
             likeImage.isHidden = false
         }
-        
-        // 元の位置に戻す処理
+
         // 手を話した時の処理
         if sender.state == UIGestureRecognizer.State.ended {
             if card.center.x < 50 {
                 // 左に大きくスワイプしたときの処理
-                UIView.animate(withDuration: 0.5, animations: {
-                    // 左へ飛ばす場合
-                    self.farCard(distance: -500)
-                })
-                
+                farCard(distance: -500, button: nil)
                 // likeImageを隠す
                 likeImage.isHidden = true
-                // 次のユーザーカードを表示させる
-                nextUserView()
             } else if card.center.x > self.view.frame.width - 50 {
-                // 右に大きくスワイプしたときの処理
-                UIView.animate(withDuration: 0.5, animations: {
-                    // 右へ飛ばす場合
-                    self.farCard(distance: 500)
-                })
-                
                 // likeImageを隠す
                 likeImage.isHidden = true
                 // いいねリストに追加
                 likedName.append(userList[showViewCount].name)
-                // 次のユーザーカードを表示させる
-                nextUserView()
+                // 右に大きくスワイプしたときの処理
+                farCard(distance: 500, button: nil)
             } else {
                 // アニメーションをつける
                 UIView.animate(withDuration: 0.5, animations: {
@@ -259,43 +262,17 @@ class ViewController: UIViewController {
     
     // よくないねボタン
     @IBAction func dislikeButtonTapped(_ sender: UIButton) {
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            // ユーザーカードを左にとばす
-            self.farCard(distance: -500)
-        })
-        
-        // ボタンを選択できなくする(連打防止)
-        sender.isEnabled = false
-        // 0.5秒後に次のカードを表示させる
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            // 次のユーザーカードを表示させる
-            self.nextUserView()
-            // ボタンを元に戻す
-            sender.isEnabled = true
-        })
+        // カードを左に飛ばす
+        farCard(distance: -500, button: sender)
     }
     
     // いいねボタン
     @IBAction func likeButtonTaped(_ sender: UIButton) {
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            // ユーザーカードを右にとばす
-            self.farCard(distance: 500)
-        })
-        
+        sender.isEnabled = false
         // いいねリストに追加
         likedName.append(userList[showViewCount].name)
-        
-        // ボタンを選択できなくする(連打防止)
-        sender.isEnabled = false
-        // 0.5秒後に次のカードを表示させる
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            // 次のユーザーカードを表示させる
-            self.nextUserView()
-            // ボタンを元に戻す
-            sender.isEnabled = true
-        })
+        // カードを右に飛ばす
+        farCard(distance: 500, button: sender)
     }
 }
 
