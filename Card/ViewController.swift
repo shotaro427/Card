@@ -35,9 +35,9 @@ class ViewController: UIViewController {
     var personList: [UIView] = []
     /// どちらビューを表示させるか
     var selectedCardCount: Int = 0
-    /// 次に表示させるユーザーリストの番目
+    /// 次に表示させるユーザーリストの番号
     var nextShowViewCount: Int = 2
-    /// 現在表示させているユーザーリストの番目
+    /// 現在表示させているユーザーリストの番号
     var showViewCount: Int = 0
     
     /// ユーザーリスト
@@ -68,8 +68,9 @@ class ViewController: UIViewController {
     
     // セグエによる遷移前に呼ばれる
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        // 行き先の確認
         if segue.identifier == "ToLikedList" {
+            // 次のビューを代入
             let vc = segue.destination as! LikedListTableViewController
             
             // LikedListTableViewControllerのlikedName(左)にViewCountrollewのLikedName(右)を代入
@@ -93,31 +94,16 @@ class ViewController: UIViewController {
         person2.alpha = 1
         
         // 二枚のビューを初期化
-        // 前面のビュー
-        let user1 = userList[showViewCount]
-        // ビューの背景に色をつける
-        person1.backgroundColor = user1.backColor
-        // ラベルに名前を表示
-        personName1.text = user1.name
-        // ラベルに職業を表示
-        personJob1.text = user1.job
-        // ラベルに出身地を表示
-        personOrigin1.text = user1.homeTown
-        // 画像を表示
-        personImage1.image = user1.image
+        // 1枚目の人物を描画
+        checkUserCard(showViewNumber: 0)
         
-        // 背面のビュー
-        let user2 = userList[showViewCount + 1]
-        // ビューの背景に色をつける
-        person2.backgroundColor = user2.backColor
-        // ラベルに名前を表示
-        personName2.text = user2.name
-        // ラベルに職業を表示
-        personJob2.text = user2.job
-        // ラベルに出身地を表示
-        personOrigin2.text = user2.homeTown
-        // 画像を表示
-        personImage2.image = user2.image
+        // 描画対象を2枚目のビューに変更
+        selectedCardCount = 1
+        //2枚目の人物を描画
+        checkUserCard(showViewNumber: 1)
+        
+        // カウントを元に戻す
+        selectedCardCount = 0
     }
     
     /// ベースカードを元に戻す
@@ -138,7 +124,7 @@ class ViewController: UIViewController {
         
         // ビューがすべての人物を描画し終わったら、ビューを真っ白にするようにする
         if nextShowViewCount < userList.count {
-            checkUserCard()
+            checkUserCard(showViewNumber: nextShowViewCount)
         } else {
             // 背面のビューを見えなくする
             person2.alpha = 0
@@ -157,10 +143,14 @@ class ViewController: UIViewController {
         selectedCardCount = showViewCount % 2
     }
     
-    /// 表示するビューを決めて、ユーザーカードを表示させる
-    func checkUserCard() {
+    /**
+     * 表示するビューを決めて、ユーザーカードを表示させる
+     * - Parameters:
+     *   - showViewNumber: 次に描画させたい人物の番号
+     */
+    func checkUserCard(showViewNumber: Int) {
         // 表示されているカードの名前を保管
-        let user = userList[nextShowViewCount]
+        let user = userList[showViewNumber]
         // 表示するビューを管理する
         if selectedCardCount == 0 {
             // ビューの背景に色をつける
