@@ -139,7 +139,6 @@ class ViewController: UIViewController {
             // 遷移処理
             performSegue(withIdentifier: "ToLikedList", sender: self)
         }
-        
         selectedCardCount = showViewCount % 2
     }
     
@@ -196,6 +195,7 @@ class ViewController: UIViewController {
             })
 
         } else {
+            // 次の人物を写す
             nextUserView()
         }
         // ベースカードをリセット
